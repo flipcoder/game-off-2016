@@ -1,0 +1,26 @@
+{
+    "name": "Player",
+    "sensitivity": 0.5,
+    "input": {
+        "binds": {
+            "e": [
+                "up",
+                "forward"
+            ],
+            "s": "left",
+            "d": [
+                "down",
+                "back"
+            ],
+            "f": "right",
+            "mouse left": "fire",
+            "mouse right": "zoom",
+            "left shift": "sprint",
+            "return": "select",
+            "space": [
+                "jump",
+                "select"
+            ]
+        }
+    }
+}
