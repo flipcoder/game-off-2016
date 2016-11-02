@@ -22,8 +22,8 @@ You can use your binoculars to track where people are.
 ## Credits
 
 Programming
-- Grady O'Connell <github.com/flipcoder>
+- Grady O'Connell (http://github.com/flipcoder)
 
 Graphics
-- Mark "Alfred" McDaniel <github.com/alfredanonymous>
+- Mark "Alfred" McDaniel (http://github.com/alfredanonymous)
 
