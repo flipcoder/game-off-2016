@@ -1,5 +1,5 @@
-#ifndef _PREGAMESTATE_H
-#define _PREGAMESTATE_H
+#ifndef _GAMESTATE_H
+#define _GAMESTATE_H
 
 #include "Qor/Node.h"
 #include "Qor/State.h"
@@ -7,7 +7,7 @@
 #include "Qor/Camera.h"
 #include "Qor/Pipeline.h"
 #include "Qor/Mesh.h"
-#include "Qor/Console.h"
+#include "Qor/Sound.h"
 
 class Qor;
 
@@ -35,6 +35,10 @@ class Game:
 
         std::shared_ptr<Node> m_pRoot;
         std::shared_ptr<Camera> m_pCamera;
+        std::shared_ptr<Sound> m_pMusic;
+        std::shared_ptr<Physics> m_pPhysics;
+
+        std::shared_ptr<Mesh> m_pPlayer;
 };
 
 #endif

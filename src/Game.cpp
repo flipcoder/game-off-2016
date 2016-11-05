@@ -19,7 +19,12 @@ Game :: Game(Qor* engine):
 void Game :: preload()
 {
     m_pCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
+    m_pMusic = m_pQor->make<Sound>("music.ogg");
+    m_pRoot->add(m_pMusic);
     m_pRoot->add(m_pCamera);
+    m_pPhysics = make_shared<Physics>(m_pRoot.get(), this);
+    //m_pPlayer = m_pQor->make<Mesh>("guy.obj");
+    //m_pRoot->add(m_pPlayer);
 }
 
 Game :: ~Game()
@@ -33,6 +38,7 @@ void Game :: enter()
     m_pPipeline->winding(true);
     m_pPipeline->bg_color(Color::black());
     m_pInput->relative_mouse(false);
+    m_pMusic->play();
 }
 
 void Game :: logic(Freq::Time t)
