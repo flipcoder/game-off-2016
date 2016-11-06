@@ -31,6 +31,7 @@ class Game:
         
         Qor* m_pQor = nullptr;
         Input* m_pInput = nullptr;
+        Controller* m_pController = nullptr;
         Pipeline* m_pPipeline = nullptr;
 
         std::shared_ptr<Node> m_pRoot;
@@ -38,7 +39,8 @@ class Game:
         std::shared_ptr<Sound> m_pMusic;
         std::shared_ptr<Physics> m_pPhysics;
 
-        std::shared_ptr<Mesh> m_pPlayer;
+        std::shared_ptr<Node> m_pPlayer;
+        std::shared_ptr<Mesh> m_pScene;
 };
 
 #endif

@@ -31,6 +31,8 @@ void Intro :: preload()
     //m_pRoot->add(m_pPlayer);
 
     auto mat = make_shared<Material>("logo.png", m_pResources);
+    auto mx = mat->size().x;
+    auto my = mat->size().y;
     m_pBG = make_shared<Mesh>(
         make_shared<MeshGeometry>(Prefab::quad(vec2(sw/2.0f, sh/2.0f), vec2(-sw/2.0f, -sh/2.0f))),
         vector<shared_ptr<IMeshModifier>>{
@@ -61,6 +63,9 @@ void Intro :: logic(Freq::Time t)
 {
     if(m_pInput->key(SDLK_ESCAPE))
         m_pQor->quit();
+
+    if(m_pInput->key(SDLK_SPACE) || m_pInput->key(SDLK_RETURN))
+        m_pQor->change_state("game");
 
     m_pRoot->logic(t);
     m_pBG->reset_orientation();
