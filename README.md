@@ -5,6 +5,8 @@ all the computers.
 
 Created for GitHub Game Off 2016
 
+Written using my own open-source game engine, [Qor](http://github.com/flipcoder/qor).
+
 Copyright (c) Grady O'Connell, 2016
 
 ## Download
