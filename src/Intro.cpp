@@ -40,7 +40,7 @@ void Intro :: preload()
         },
         make_shared<MeshMaterial>(mat)
     );
-    m_BGScale = 0.5f;
+    //m_BGScale = 0.5f;
     m_pBG->position(glm::vec3(sw/2.0f, sh/2.0f, 0.0f));
     m_pRoot->add(m_pBG);
 }
@@ -68,9 +68,9 @@ void Intro :: logic(Freq::Time t)
         m_pQor->change_state("game");
 
     m_pRoot->logic(t);
-    m_pBG->reset_orientation();
-    m_BGScale = std::min(1.0f, m_BGScale + 0.001f * t);
-    m_pBG->scale(glm::vec3(m_BGScale, m_BGScale, 1.0f));
+    //m_pBG->reset_orientation();
+    //m_BGScale = std::min(1.0f, m_BGScale + 0.001f * t);
+    //m_pBG->scale(glm::vec3(m_BGScale, m_BGScale, 1.0f));
 }
 
 void Intro :: render() const

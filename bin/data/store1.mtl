@@ -1,0 +1,84 @@
+# Blender MTL File: 'store1.blend'
+# Material Count: 8
+
+newmtl Material
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.027188 0.548765 0.517792
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd table.png
+
+newmtl Material.002
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.726154 0.655036 0.493574
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd computer-crt.png
+
+newmtl Material.003
+Ns 341.176471
+Ka 1.000000 1.000000 1.000000
+Kd 0.558554 0.558554 0.558554
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd checkout1.png
+
+newmtl Material.003_shelf.png
+Ns 341.176471
+Ka 1.000000 1.000000 1.000000
+Kd 0.558554 0.558554 0.558554
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd shelf.png
+
+newmtl None
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd carpet.png
+
+newmtl None_ceiling.png
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd ceiling.png
+
+newmtl None_wall.png
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd wall.png
+
+newmtl blank.001
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.000000 0.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd computer-crt.png
