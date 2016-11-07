@@ -15,9 +15,9 @@ Downloads not yet available, jam is still in progress!
 
 ## How to Play
 
-Run around the computer store with WASD, hacking computers with the E button.
-If anyone working at the store sees you, you lose the mission.
-You can use your binoculars to track where people are.
+Run around the computer store with WASD and the mouse,
+hacking computers with left click.
+If anyone working at the store sees you, you lose.
 
 ## Credits
 
