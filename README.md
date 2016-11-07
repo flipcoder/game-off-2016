@@ -1,4 +1,4 @@
-![Hacking in Progress](http://i.imgur.com/6Vq4bUB.jpg)
+![Hacking in Progress](http://i.imgur.com/7MIJD4y.jpg)
 
 A game based on the meme image of a guy running around a computer store, hacking
 all the computers.
