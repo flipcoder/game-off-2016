@@ -9,9 +9,7 @@ Copyright (c) Grady O'Connell, 2016
 
 ## Download
 
-Windows and Linux builds will be available when the game off is done.
-
-Downloads not yet available, jam is still in progress!
+Windows and Linux builds will be available when the game-off is done.
 
 ## How to Play
 
@@ -21,7 +19,7 @@ If anyone working at the store sees you, you lose.
 
 ## Credits
 
-Programming
+Programming & Music
 - Grady O'Connell (http://github.com/flipcoder)
 
 Graphics
