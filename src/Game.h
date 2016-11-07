@@ -8,6 +8,7 @@
 #include "Qor/Pipeline.h"
 #include "Qor/Mesh.h"
 #include "Qor/Sound.h"
+#include "Qor/Text.h"
 
 class Qor;
 
@@ -28,6 +29,8 @@ class Game:
         }
 
     private:
+        
+        static const char* const TARGETS[];
         
         Qor* m_pQor = nullptr;
         Input* m_pInput = nullptr;
@@ -56,6 +59,11 @@ class Game:
         float m_BobSpeed = 4.0f;
 
         const int MAX_HAX = 5;
+
+        std::shared_ptr<Font> m_pFont;
+        std::shared_ptr<Text> m_pText;
+
+        float m_TextTime = 0.0f;
 };
 
 #endif

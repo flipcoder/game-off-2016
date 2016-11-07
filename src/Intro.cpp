@@ -23,14 +23,14 @@ void Intro :: preload()
     float sh = m_pQor->window()->size().y;
     
     m_pCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
-    m_pMusic = m_pQor->make<Sound>("music.ogg");
+    m_pMusic = m_pQor->make<Sound>("menu.ogg");
     m_pRoot->add(m_pMusic);
     m_pRoot->add(m_pCamera);
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), this);
     //m_pPlayer = m_pQor->make<Mesh>("guy.obj");
     //m_pRoot->add(m_pPlayer);
 
-    auto mat = make_shared<Material>("logo.png", m_pResources);
+    auto mat = make_shared<Material>("vcrosd.png", m_pResources);
     auto mx = mat->size().x;
     auto my = mat->size().y;
     m_pBG = make_shared<Mesh>(
@@ -43,6 +43,17 @@ void Intro :: preload()
     //m_BGScale = 0.5f;
     m_pBG->position(glm::vec3(sw/2.0f, sh/2.0f, 0.0f));
     m_pRoot->add(m_pBG);
+
+    m_pFont = std::make_shared<Font>(
+        m_pResources->transform(string("vcr.ttf:") +
+            to_string(int(sw / 24.0f + 0.5f))),
+        m_pResources
+    );
+    m_pText = std::make_shared<Text>(m_pFont);
+    m_pText->align(Text::CENTER);
+    m_pText->position(glm::vec3(sw / 2.0f, sh / 2.0f, 1.0f));
+    m_pText->set("Silly Bernard, do you\nreally think you can hack\nthe world one computer store\nat a time?");
+    m_pRoot->add(m_pText);
 }
 
 Intro :: ~Intro()

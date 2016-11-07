@@ -3,12 +3,27 @@
 #include "Qor/Input.h"
 #include "Qor/Qor.h"
 #include "Qor/Material.h"
+#include "Qor/Text.h"
 #include <glm/glm.hpp>
 #include <cstdlib>
 #include <chrono>
 #include <thread>
 using namespace std;
 using namespace glm;
+
+// These keywords are going to get me in trouble
+const char* const Game :: TARGETS[] = {
+    "WHITE HOUSE",
+    "NSA",
+    "PENTAGON",
+    "AREA 51",
+    "STATUE OF LIBERTY",
+    "CAPITOL BUILDING",
+    "FEDERAL RESERVE",
+    "IMF",
+    "DNC",
+    "ANONYMOUS"
+};
 
 Game :: Game(Qor* engine):
     m_pQor(engine),
@@ -79,6 +94,16 @@ void Game :: preload()
     );
     //m_BGScale = 0.5f;
     m_pOrthoRoot->add(mesh);
+
+    m_pFont = std::make_shared<Font>(
+        m_pResources->transform(string("vcr.ttf:") +
+            to_string(int(sw / 24.0f + 0.5f))),
+        m_pResources
+    );
+    m_pText = std::make_shared<Text>(m_pFont);
+    m_pText->align(Text::CENTER);
+    m_pText->position(glm::vec3(sw / 2.0f, sh / 4.0f, 0.0f));
+    m_pOrthoRoot->add(m_pText);
 }
 
 Game :: ~Game()
@@ -129,8 +154,17 @@ void Game :: logic(Freq::Time t)
             Sound::play(m_pCamera.get(),
                 "hack" + to_string(std::rand()%MAX_HAX) + ".wav", m_pResources
             );
+            m_pText->set(
+                string("HACKING ") +
+                TARGETS[std::rand()%(sizeof TARGETS / sizeof TARGETS[0])]
+            );
+            m_TextTime = 2.0f;
         }
     }
+
+    m_TextTime = std::max(0.0f, m_TextTime - t.s());
+    if(m_TextTime <= K_EPSILON)
+        m_pText->set("");
 
     *m_pCamera->matrix() = *m_pPlayerNode->matrix();
     m_pCamera->position(m_pPlayerNode->position(Space::WORLD));
@@ -199,6 +233,7 @@ void Game :: logic(Freq::Time t)
     m_pPlayer->velocity(v);
     
     m_pRoot->logic(t);
+    m_pOrthoRoot->logic(t);
 }
 
 void Game :: render() const

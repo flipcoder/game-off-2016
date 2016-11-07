@@ -8,7 +8,7 @@
     },
     "audio": {
         "volume": 100,
-        "sound-volume": 100,
+        "sound-volume": 25,
         "music-volume": 100
     }
 }

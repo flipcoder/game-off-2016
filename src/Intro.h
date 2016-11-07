@@ -9,6 +9,7 @@
 #include "Qor/Mesh.h"
 #include "Qor/Sound.h"
 #include "Qor/Material.h"
+#include "Qor/Text.h"
 
 class Qor;
 
@@ -44,6 +45,9 @@ class Intro:
 
         float m_BGScale = 1.0f;
         std::shared_ptr<Mesh> m_pBG;
+
+        std::shared_ptr<Font> m_pFont;
+        std::shared_ptr<Text> m_pText;
 };
 
 #endif
