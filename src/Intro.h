@@ -48,6 +48,9 @@ class Intro:
 
         std::shared_ptr<Font> m_pFont;
         std::shared_ptr<Text> m_pText;
+
+        std::string m_Text;
+        float m_TextVisibility = 0.0f;
 };
 
 #endif

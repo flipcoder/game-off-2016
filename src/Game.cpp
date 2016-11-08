@@ -22,7 +22,9 @@ const char* const Game :: TARGETS[] = {
     "FEDERAL RESERVE",
     "IMF",
     "DNC",
-    "ANONYMOUS"
+    "SUPREME COURT",
+    "ANONYMOUS",
+    "JUSTICE SYSTEM"
 };
 
 Game :: Game(Qor* engine):
@@ -44,7 +46,7 @@ void Game :: preload()
     m_pOrthoCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
     m_pMusic = m_pQor->make<Sound>("music.ogg");
     m_pRoot->add(m_pMusic);
-    m_pScene = m_pQor->make<Mesh>("store1.obj");
+    m_pScene = m_pQor->make<Mesh>("store2.obj");
     m_pRoot->add(m_pScene);
     
     m_pPlayer = make_shared<Mesh>();
@@ -73,6 +75,72 @@ void Game :: preload()
 
     auto meshes = m_pScene->find_type<Mesh>();
     for(auto&& mesh: meshes){
+        
+        string fn = mesh->material()->texture()->filename();
+        glm::vec3 pmin(mesh->geometry()->verts()[0]);
+        glm::vec3 pmax(mesh->geometry()->verts()[0]);
+        for(auto&& v: mesh->geometry()->verts())
+        {
+            if(v.x < pmin.x)
+                pmin.x = v.x;
+            if(v.x > pmax.x)
+                pmax.x = v.x;
+            if(v.y < pmin.y)
+                pmin.y = v.y;
+            if(v.y > pmax.y)
+                pmax.y = v.y;
+            if(v.z < pmin.z)
+                pmin.z = v.z;
+            if(v.z > pmax.z)
+                pmax.z = v.z;
+        }
+        vec3 pt = (pmax + pmin) * 0.5f;
+        
+        if(fn.find("spawn-clerk") != string::npos)
+        {   
+            //LOG(Vector::to_string(pt));
+            auto clerk = m_pQor->make<Mesh>("clerk.obj");
+            m_Enemies.push_back(clerk);
+            m_pRoot->add(clerk);
+            mesh->detach();
+            clerk->position(pmax + Axis::Y * 0.5f);
+        }
+
+        if(fn.find("computer-crt") != string::npos)
+        {
+            Comp* closest_comp = nullptr;
+            glm::vec3 closest_pos;
+            float closest_dist;
+            for(auto&& cmp: m_Comps)
+            {
+                float dist = glm::length(cmp.pos - pt);
+                if(!closest_comp || dist < closest_dist)
+                {
+                    closest_comp = &cmp;
+                    closest_pos = pt;
+                    closest_dist = dist;
+                }
+            }
+
+            LOGf("dist %s", closest_dist);
+            if(closest_comp && closest_dist <= 0.5f)
+            {
+                LOG("batch");
+                closest_comp->meshes.push_back(mesh);
+                m_CompMeshes[mesh] = closest_comp->index;
+            }
+            else
+            {
+                LOG("new comp");
+                Comp c;
+                c.pos = pt;
+                c.meshes.push_back(mesh);
+                m_Comps.push_back(c);
+                m_CompMeshes[mesh] = m_Comps.size()-1;
+                m_Comps[m_Comps.size()-1].index = m_Comps.size()-1;
+            }
+        }
+        
         mesh->set_physics(Node::STATIC);
     }
     
@@ -103,6 +171,11 @@ void Game :: preload()
     m_pText = std::make_shared<Text>(m_pFont);
     m_pText->align(Text::CENTER);
     m_pText->position(glm::vec3(sw / 2.0f, sh / 4.0f, 0.0f));
+    m_pShadowText = std::make_shared<Text>(m_pFont);
+    m_pShadowText->align(Text::CENTER);
+    m_pShadowText->position(glm::vec3(sw / 2.0f + 2.0f, sh / 4.0f + 2.0f, 0.0f));
+    m_pShadowText->color(Color::black());
+    m_pOrthoRoot->add(m_pShadowText);
     m_pOrthoRoot->add(m_pText);
 }
 
@@ -143,9 +216,26 @@ void Game :: logic(Freq::Time t)
                 if(dist < 2.0f)
                 {
                     hacked = true;
-                    mesh->material(make_shared<MeshMaterial>(
-                        m_pResources->cache_as<Texture>("computer-hacked.png")
-                    ));
+                    Comp* comp = nullptr;
+                    for(auto&& c: m_Comps)
+                    {
+                        for(auto&& m: c.meshes)
+                        {
+                            if(m == mesh){
+                                comp = &c;
+                                
+                                break;
+                            }
+                        }
+                        if(comp)
+                            break;
+                    }
+                    assert(comp);
+                    for(auto&& m: comp->meshes){
+                        m->material(make_shared<MeshMaterial>(
+                            m_pResources->cache_as<Texture>("computer-hacked.png")
+                        ));
+                    }
                 }
             }
         }
@@ -154,17 +244,23 @@ void Game :: logic(Freq::Time t)
             Sound::play(m_pCamera.get(),
                 "hack" + to_string(std::rand()%MAX_HAX) + ".wav", m_pResources
             );
-            m_pText->set(
-                string("HACKING ") +
-                TARGETS[std::rand()%(sizeof TARGETS / sizeof TARGETS[0])]
+            Sound::play(m_pCamera.get(),
+                "noise.wav", m_pResources
             );
+
+            auto txt = string("HACKING ") +
+                TARGETS[std::rand()%(sizeof TARGETS / sizeof TARGETS[0])];
+            m_pText->set(txt);
+            m_pShadowText->set(txt);
             m_TextTime = 2.0f;
         }
     }
 
     m_TextTime = std::max(0.0f, m_TextTime - t.s());
-    if(m_TextTime <= K_EPSILON)
+    if(m_TextTime <= K_EPSILON){
         m_pText->set("");
+        m_pShadowText->set("");
+    }
 
     *m_pCamera->matrix() = *m_pPlayerNode->matrix();
     m_pCamera->position(m_pPlayerNode->position(Space::WORLD));
@@ -238,11 +334,9 @@ void Game :: logic(Freq::Time t)
 
 void Game :: render() const
 {
-    m_pPipeline->blend(false);
     m_pPipeline->winding(false);
     m_pPipeline->render(m_pRoot.get(), m_pCamera.get());
     
-    m_pPipeline->blend(true);
     m_pPipeline->winding(true);
     m_pPipeline->render(m_pOrthoRoot.get(), m_pOrthoCamera.get(),
         nullptr, Pipeline::NO_CLEAR | Pipeline::NO_DEPTH

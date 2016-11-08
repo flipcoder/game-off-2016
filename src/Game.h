@@ -28,6 +28,13 @@ class Game:
             return true;
         }
 
+        struct Comp
+        {
+            glm::vec3 pos;
+            unsigned index;
+            std::vector<Mesh*> meshes;
+        };
+
     private:
         
         static const char* const TARGETS[];
@@ -62,6 +69,11 @@ class Game:
 
         std::shared_ptr<Font> m_pFont;
         std::shared_ptr<Text> m_pText;
+        std::shared_ptr<Text> m_pShadowText;
+
+        std::vector<std::shared_ptr<Mesh>> m_Enemies;
+        std::vector<Comp> m_Comps;
+        std::map<Mesh*, unsigned> m_CompMeshes;
 
         float m_TextTime = 0.0f;
 };

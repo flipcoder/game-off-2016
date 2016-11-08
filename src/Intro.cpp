@@ -52,8 +52,9 @@ void Intro :: preload()
     m_pText = std::make_shared<Text>(m_pFont);
     m_pText->align(Text::CENTER);
     m_pText->position(glm::vec3(sw / 2.0f, sh / 2.0f, 1.0f));
-    m_pText->set("Silly Bernard, do you\nreally think you can hack\nthe world one computer store\nat a time?");
     m_pRoot->add(m_pText);
+
+    m_Text = "Silly Bernard, do you\nreally think you can hack\nthe world one computer store\nat a time?";
 }
 
 Intro :: ~Intro()
@@ -75,9 +76,14 @@ void Intro :: logic(Freq::Time t)
     if(m_pInput->key(SDLK_ESCAPE))
         m_pQor->quit();
 
-    if(m_pInput->key(SDLK_SPACE) || m_pInput->key(SDLK_RETURN))
-        m_pQor->change_state("game");
+    if(m_TextVisibility >= 1.0f*m_Text.size() - K_EPSILON){
+        if(m_pInput->key(SDLK_SPACE) || m_pInput->key(SDLK_RETURN))
+            m_pQor->change_state("game");
+    }
 
+    m_TextVisibility = std::min(1.0f*m_Text.size(), m_TextVisibility + t.s() * 20.0f);
+    m_pText->set(m_Text.substr(0,int(m_TextVisibility)));
+    
     m_pRoot->logic(t);
     //m_pBG->reset_orientation();
     //m_BGScale = std::min(1.0f, m_BGScale + 0.001f * t);
