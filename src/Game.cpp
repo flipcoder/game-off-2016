@@ -122,16 +122,16 @@ void Game :: preload()
                 }
             }
 
-            LOGf("dist %s", closest_dist);
+            //LOGf("dist %s", closest_dist);
             if(closest_comp && closest_dist <= 0.5f)
             {
-                LOG("batch");
+                //LOG("batch");
                 closest_comp->meshes.push_back(mesh);
                 m_CompMeshes[mesh] = closest_comp->index;
             }
             else
             {
-                LOG("new comp");
+                //LOG("new comp");
                 Comp c;
                 c.pos = pt;
                 c.meshes.push_back(mesh);
@@ -171,12 +171,17 @@ void Game :: preload()
     m_pText = std::make_shared<Text>(m_pFont);
     m_pText->align(Text::CENTER);
     m_pText->position(glm::vec3(sw / 2.0f, sh / 4.0f, 0.0f));
+    //m_pInstructions = std::make_shared<Text>(m_pFont);
+    //m_pInstructions->align(Text::CENTER);
+    //m_pInstructions->position(glm::vec3(sw * 2.0f, sh * (3.0f/4.0f), 0.0f));
+    //m_pInstructions->set("Hack the computers, don't draw their attention...");
     m_pShadowText = std::make_shared<Text>(m_pFont);
     m_pShadowText->align(Text::CENTER);
     m_pShadowText->position(glm::vec3(sw / 2.0f + 2.0f, sh / 4.0f + 2.0f, 0.0f));
     m_pShadowText->color(Color::black());
     m_pOrthoRoot->add(m_pShadowText);
     m_pOrthoRoot->add(m_pText);
+    //m_pOrthoRoot->add(m_pInstructions);
 }
 
 Game :: ~Game()
@@ -202,17 +207,19 @@ void Game :: logic(Freq::Time t)
     m_pPhysics->logic(t);
 
     // camera logic
-    if(m_pController->button("fire")){
-        bool hacked = false;
-        auto hits = m_pPhysics->hits(m_pPlayer->position(), m_pPlayerNode->orient_to_world(-Axis::Z) * 100.0f);
-        for(auto&& hit: hits)
-        {
-            auto mesh = (Mesh*)std::get<0>(hit);
-            auto fn = mesh->material()->texture()->filename();
-            //LOGf("hit: %s", fn);
+    //if(m_pController->button("fire")){
+    bool hacked = false;
+    auto hits = m_pPhysics->hits(m_pPlayer->position(), m_pPlayerNode->orient_to_world(-Axis::Z) * 100.0f);
+    for(auto&& hit: hits)
+    {
+        auto mesh = (Mesh*)std::get<0>(hit);
+        auto fn = mesh->material()->texture()->filename();
+        //LOGf("hit: %s", fn);
+        float dist = glm::length(std::get<1>(hit) - m_pPlayer->position());
+        
+        if(m_pController->button("fire")){
             if(fn.find("computer") != string::npos && fn.find("hacked") == string::npos)
             {
-                float dist = glm::length(std::get<1>(hit) - m_pPlayer->position());
                 if(dist < 2.0f)
                 {
                     hacked = true;
@@ -239,27 +246,54 @@ void Game :: logic(Freq::Time t)
                 }
             }
         }
-        if(hacked)
+        if(fn.find("door") != string::npos && dist < 2.0f)
         {
-            Sound::play(m_pCamera.get(),
-                "hack" + to_string(std::rand()%MAX_HAX) + ".wav", m_pResources
-            );
-            Sound::play(m_pCamera.get(),
-                "noise.wav", m_pResources
-            );
-
-            auto txt = string("HACKING ") +
-                TARGETS[std::rand()%(sizeof TARGETS / sizeof TARGETS[0])];
-            m_pText->set(txt);
-            m_pShadowText->set(txt);
-            m_TextTime = 2.0f;
+            if(m_Hacked == m_Comps.size())
+                m_pQor->change_state("intro");
         }
     }
+    if(hacked)
+    {
+        ++m_Hacked;
+        //LOGf("%s", (m_Comps.size() - m_Hacked));
+        if(m_Hacked == m_Comps.size())
+            m_Countdown = 10.0f;
+        
+        Sound::play(m_pCamera.get(),
+            "hack" + to_string(std::rand()%MAX_HAX) + ".wav", m_pResources
+        );
+        Sound::play(m_pCamera.get(), "noise.wav", m_pResources);
 
-    m_TextTime = std::max(0.0f, m_TextTime - t.s());
-    if(m_TextTime <= K_EPSILON){
-        m_pText->set("");
-        m_pShadowText->set("");
+        auto txt = string("HACKING ") +
+            TARGETS[std::rand()%(sizeof TARGETS / sizeof TARGETS[0])];
+        m_pText->set(txt);
+        m_pShadowText->set(txt);
+        m_TextTime = 2.0f;
+    }
+    
+    if(m_Countdown > -K_EPSILON){
+        int countdown_before = int(std::ceil(m_Countdown));
+        m_Countdown = std::max(0.0f, m_Countdown - t.s());
+        int countdown_now = int(std::ceil(m_Countdown));
+        if(countdown_before != countdown_now)
+        {
+            string msg = "EXIT IN ";
+            m_pText->set(msg + to_string(countdown_now));
+            m_pShadowText->set(msg + to_string(countdown_now));
+            Sound::play(m_pCamera.get(), "alarm.wav", m_pResources);
+        }
+        if(m_Countdown < K_EPSILON)
+        {
+            m_pQor->change_state("intro");
+        }
+    }
+    else
+    {
+        m_TextTime = std::max(0.0f, m_TextTime - t.s());
+        if(m_TextTime <= K_EPSILON){
+            m_pText->set("");
+            m_pShadowText->set("");
+        }
     }
 
     *m_pCamera->matrix() = *m_pPlayerNode->matrix();

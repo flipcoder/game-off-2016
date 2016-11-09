@@ -54,7 +54,7 @@ void Intro :: preload()
     m_pText->position(glm::vec3(sw / 2.0f, sh / 2.0f, 1.0f));
     m_pRoot->add(m_pText);
 
-    m_Text = "Silly Bernard, do you\nreally think you can hack\nthe world one computer store\nat a time?";
+    m_Text = "Silly Bernard, do you\nreally think you can hack\nthe world, one computer store\nat a time?";
 }
 
 Intro :: ~Intro()

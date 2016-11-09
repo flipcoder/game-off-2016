@@ -69,6 +69,7 @@ class Game:
 
         std::shared_ptr<Font> m_pFont;
         std::shared_ptr<Text> m_pText;
+        std::shared_ptr<Text> m_pInstructions;
         std::shared_ptr<Text> m_pShadowText;
 
         std::vector<std::shared_ptr<Mesh>> m_Enemies;
@@ -76,6 +77,8 @@ class Game:
         std::map<Mesh*, unsigned> m_CompMeshes;
 
         float m_TextTime = 0.0f;
+        int m_Hacked = 0;
+        float m_Countdown = -1.0f;
 };
 
 #endif
