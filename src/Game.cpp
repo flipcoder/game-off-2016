@@ -37,6 +37,28 @@ Game :: Game(Qor* engine):
     m_pResources(engine->resources())
 {}
 
+glm::vec3 Game :: calc_origin(Mesh* mesh)
+{
+    glm::vec3 pmin(mesh->geometry()->verts()[0]);
+    glm::vec3 pmax(mesh->geometry()->verts()[0]);
+    for(auto&& v: mesh->geometry()->verts())
+    {
+        if(v.x < pmin.x)
+            pmin.x = v.x;
+        if(v.x > pmax.x)
+            pmax.x = v.x;
+        if(v.y < pmin.y)
+            pmin.y = v.y;
+        if(v.y > pmax.y)
+            pmax.y = v.y;
+        if(v.z < pmin.z)
+            pmin.z = v.z;
+        if(v.z > pmax.z)
+            pmax.z = v.z;
+    }
+    return (pmax + pmin) * 0.5f;
+}
+
 void Game :: preload()
 {
     float sw = m_pQor->window()->size().x;
@@ -75,26 +97,19 @@ void Game :: preload()
 
     auto meshes = m_pScene->find_type<Mesh>();
     for(auto&& mesh: meshes){
-        
         string fn = mesh->material()->texture()->filename();
-        glm::vec3 pmin(mesh->geometry()->verts()[0]);
-        glm::vec3 pmax(mesh->geometry()->verts()[0]);
-        for(auto&& v: mesh->geometry()->verts())
-        {
-            if(v.x < pmin.x)
-                pmin.x = v.x;
-            if(v.x > pmax.x)
-                pmax.x = v.x;
-            if(v.y < pmin.y)
-                pmin.y = v.y;
-            if(v.y > pmax.y)
-                pmax.y = v.y;
-            if(v.z < pmin.z)
-                pmin.z = v.z;
-            if(v.z > pmax.z)
-                pmax.z = v.z;
-        }
-        vec3 pt = (pmax + pmin) * 0.5f;
+        auto pt = calc_origin(mesh);
+
+        if(fn.find("nav") != string::npos)
+            m_Nav.point.push_back(pt);
+        else if(fn.find("orient") != string::npos)
+            m_Nav.orient.push_back(pt);
+        else if(fn.find("fork") != string::npos)
+            m_Nav.fork.push_back(pt);
+    }
+    for(auto&& mesh: meshes){
+        string fn = mesh->material()->texture()->filename();
+        auto pt = calc_origin(mesh);
 
         if(fn.find("nav") != string::npos)
         {
@@ -119,12 +134,12 @@ void Game :: preload()
         else if(fn.find("spawn-clerk") != string::npos)
         {
             //LOG(Vector::to_string(pt));
-            auto clerk = make_shared<Enemy>(m_pResources);
+            auto clerk = make_shared<Enemy>(&m_Nav, m_pResources);
             //auto clerk = m_pQor->make<Mesh>("clerk.obj");
             m_Enemies.push_back(clerk);
             m_pRoot->add(clerk);
             mesh->detach();
-            clerk->position(pmax + Axis::Y * 0.5f);
+            clerk->position(pt + Axis::Y * 0.5f);
         }
         else if(fn.find("computer-crt") != string::npos)
         {

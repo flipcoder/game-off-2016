@@ -13,6 +13,13 @@
 
 class Qor;
 
+struct Nav
+{
+    std::vector<glm::vec3> point;
+    std::vector<glm::vec3> fork;
+    std::vector<glm::vec3> orient;
+};
+
 class Game:
     public State
 {
@@ -37,6 +44,10 @@ class Game:
         };
 
     private:
+
+        Nav* nav() { return &m_Nav; }
+        
+        glm::vec3 calc_origin(Mesh* mesh);
         
         static const char* const TARGETS[];
         
@@ -82,6 +93,8 @@ class Game:
         float m_Countdown = -1.0f;
 
         std::map<std::string, std::vector<std::shared_ptr<Mesh>>> m_BatchMeshes;
+
+        Nav m_Nav;
 };
 
 #endif

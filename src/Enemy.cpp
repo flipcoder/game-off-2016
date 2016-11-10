@@ -1,8 +1,10 @@
 #include "Enemy.h"
+#include "Game.h"
 
-Enemy :: Enemy(Cache<Resource, std::string>* cache):
+Enemy :: Enemy(Nav* nav, Cache<Resource, std::string>* cache):
     Mesh(cache->transform("clerk.obj"), cache),
-    m_pResources(cache)
+    m_pResources(cache),
+    m_pNav(nav)
 {
     
 }
