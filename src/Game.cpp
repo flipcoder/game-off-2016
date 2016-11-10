@@ -95,18 +95,38 @@ void Game :: preload()
                 pmax.z = v.z;
         }
         vec3 pt = (pmax + pmin) * 0.5f;
-        
-        if(fn.find("spawn-clerk") != string::npos)
-        {   
+
+        if(fn.find("nav") != string::npos)
+        {
+            mesh->detach();
+        }
+        else if(fn.find("orient") != string::npos)
+        {
+            mesh->detach();
+        }
+        else if(fn.find("fork") != string::npos)
+        {
+            mesh->detach();
+        }
+        else if(fn.find("box") != string::npos ||
+            fn.find("pack") != string::npos)
+        {
+            //mesh->bakeable(true);
+            //m_BatchMeshes[fn].push_back(mesh);
+            mesh->detach();
+            //mesh->detach();
+        }
+        else if(fn.find("spawn-clerk") != string::npos)
+        {
             //LOG(Vector::to_string(pt));
-            auto clerk = m_pQor->make<Mesh>("clerk.obj");
+            auto clerk = make_shared<Enemy>(m_pResources);
+            //auto clerk = m_pQor->make<Mesh>("clerk.obj");
             m_Enemies.push_back(clerk);
             m_pRoot->add(clerk);
             mesh->detach();
             clerk->position(pmax + Axis::Y * 0.5f);
         }
-
-        if(fn.find("computer-crt") != string::npos)
+        else if(fn.find("computer-crt") != string::npos)
         {
             Comp* closest_comp = nullptr;
             glm::vec3 closest_pos;
@@ -139,10 +159,39 @@ void Game :: preload()
                 m_CompMeshes[mesh] = m_Comps.size()-1;
                 m_Comps[m_Comps.size()-1].index = m_Comps.size()-1;
             }
+            mesh->set_physics(Node::STATIC);
         }
-        
-        mesh->set_physics(Node::STATIC);
+        else
+        {
+            mesh->set_physics(Node::STATIC);
+        }
     }
+
+    // batch meshes of same materials together for speed
+    //for(auto&& v: m_BatchMeshes)
+    //{
+    //    unsigned batch_index = 0;
+    //    std::vector<glm::vec3> batch_verts;
+    //    std::vector<glm::uvec3> batch_indices;
+    //    for(auto&& bm: v)
+    //    {
+    //        auto geom = std::dynamic_pointer_cast<MeshIndexedGeometry>(bm.second->geometry());
+    //        auto verts = geom->verts();
+    //        auto indices = geom->indices();
+    //        if(batch_index)
+    //            for(auto& idx: indices)
+    //                idx += base_index;
+    //        batch_verts.insert(batch_verts.begin(), ENTIRE(verts));
+    //        batch_indices.insert(batch_indices.begin(), ENTIRE(indices));
+    //        batch_index += geom->size();
+    //    }
+    //    auto mesh = std::make_shared<Mesh>(std::make_shared<MeshGeometry>(
+    //        batch_verts, batch_indices
+    //    ));
+    //    m_pScene->add(mesh);
+    //    //assert(geom);
+    //    //bm->detach();
+    //}
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), this);
     m_pPhysics->generate(m_pRoot.get(), Physics::GEN_RECURSIVE);

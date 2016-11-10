@@ -9,6 +9,7 @@
 #include "Qor/Mesh.h"
 #include "Qor/Sound.h"
 #include "Qor/Text.h"
+#include "Enemy.h"
 
 class Qor;
 
@@ -72,13 +73,15 @@ class Game:
         std::shared_ptr<Text> m_pInstructions;
         std::shared_ptr<Text> m_pShadowText;
 
-        std::vector<std::shared_ptr<Mesh>> m_Enemies;
+        std::vector<std::shared_ptr<Enemy>> m_Enemies;
         std::vector<Comp> m_Comps;
         std::map<Mesh*, unsigned> m_CompMeshes;
 
         float m_TextTime = 0.0f;
         int m_Hacked = 0;
         float m_Countdown = -1.0f;
+
+        std::map<std::string, std::vector<std::shared_ptr<Mesh>>> m_BatchMeshes;
 };
 
 #endif
