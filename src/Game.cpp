@@ -134,12 +134,11 @@ void Game :: preload()
         else if(fn.find("spawn-clerk") != string::npos)
         {
             //LOG(Vector::to_string(pt));
-            auto clerk = make_shared<Enemy>(&m_Nav, m_pResources);
+            auto clerk = make_shared<Enemy>(&m_Nav, pt + Axis::Y * 0.5f, m_pResources);
             //auto clerk = m_pQor->make<Mesh>("clerk.obj");
             m_Enemies.push_back(clerk);
             m_pRoot->add(clerk);
             mesh->detach();
-            clerk->position(pt + Axis::Y * 0.5f);
         }
         else if(fn.find("computer-crt") != string::npos)
         {

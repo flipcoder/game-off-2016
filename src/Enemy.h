@@ -10,7 +10,7 @@ class Enemy:
 {
     public:
 
-        Enemy(Nav* nav, Cache<Resource, std::string>* cache);
+        Enemy(Nav* nav, glm::vec3 pos, Cache<Resource, std::string>* cache);
         virtual ~Enemy() {}
 
         virtual void logic_self(Freq::Time t) override;
@@ -21,6 +21,9 @@ class Enemy:
         Node* m_pRoot;
         Nav* m_pNav;
         //std::shared_ptr<Mesh> m_pMesh;
+
+        // if enemy is an orienter, contains nearest orient poits
+        std::vector<glm::vec3> m_Orients;
 
 };
 
