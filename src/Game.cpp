@@ -74,7 +74,6 @@ void Game :: preload()
     m_pPlayer = make_shared<Mesh>();
     m_pPlayerNode = make_shared<Node>();
     m_pPlayerMesh = m_pQor->make<Mesh>("hacker.obj");
-    m_pPlayerMesh->rotate(0.5f, Axis::Y);
     m_pPlayer->self_visible(false);
     auto sz = 0.25f;
     auto height = 1.0f;
@@ -129,7 +128,6 @@ void Game :: preload()
             //mesh->bakeable(true);
             //m_BatchMeshes[fn].push_back(mesh);
             mesh->detach();
-            //mesh->detach();
         }
         else if(fn.find("spawn-clerk") != string::npos)
         {

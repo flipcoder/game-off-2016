@@ -24,6 +24,7 @@ class Enemy:
         bool in_history(glm::vec3 target) const;
         glm::vec3 nearest_not_in_history(std::vector<glm::vec3>& nav) const;
         void orient_towards(glm::vec3 p);
+        void gradually_orient(Freq::Time t);
         
         Cache<Resource, std::string>* m_pResources;
         Node* m_pRoot;
@@ -41,6 +42,7 @@ class Enemy:
         glm::vec3 m_Target;
         glm::mat4 m_OrientSrc;
         glm::mat4 m_OrientTarget;
+        float m_OrientAngle = 0.0f;
         float m_OrientT = 0.0f;
         boost::circular_buffer<glm::vec3> m_History;
 
@@ -49,6 +51,7 @@ class Enemy:
         float m_BobAmp = 0.02f;
         float m_BobSpeed = 4.0f;
 
+        float m_OrientSpeed = 0.5f;
 };
 
 #endif
