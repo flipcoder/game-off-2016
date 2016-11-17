@@ -5,13 +5,15 @@
 #include <boost/circular_buffer.hpp>
 
 class Nav;
+class Physics;
+class Player;
 
 class Enemy:
     public Mesh
 {
     public:
 
-        Enemy(Nav* nav, glm::vec3 pos, Cache<Resource, std::string>* cache);
+        Enemy(Nav* nav, glm::vec3 pos, Player* player, ::Physics* physics, Cache<Resource, std::string>* cache);
         virtual ~Enemy() {}
 
         virtual void logic_self(Freq::Time t) override;
@@ -29,6 +31,8 @@ class Enemy:
         Cache<Resource, std::string>* m_pResources;
         Node* m_pRoot;
         Nav* m_pNav;
+        Player* m_pPlayer;
+        ::Physics* m_pPhysics;
 
         bool m_Orient = false;
         //std::shared_ptr<Mesh> m_pMesh;

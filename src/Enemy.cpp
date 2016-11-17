@@ -1,14 +1,18 @@
 #include "Enemy.h"
+#include "Player.h"
 #include "Game.h"
+#include "Qor/Physics.h"
 #include <glm/gtx/matrix_interpolation.hpp>
 #include <glm/gtx/vector_angle.hpp>
 using namespace std;
 using namespace glm;
 
-Enemy :: Enemy(Nav* nav, glm::vec3 pos, Cache<Resource, std::string>* cache):
+Enemy :: Enemy(Nav* nav, glm::vec3 pos, Player* player, ::Physics* physics, Cache<Resource, std::string>* cache):
     Mesh(cache->transform("clerk.obj"), cache),
     m_pResources(cache),
-    m_pNav(nav)
+    m_pNav(nav),
+    m_pPlayer(player),
+    m_pPhysics(physics)
 {
     m_History.set_capacity(4);
     
@@ -85,8 +89,8 @@ void Enemy :: logic_self(Freq::Time t)
         {
             m_PointsIndex = (m_PointsIndex+1) % m_Points.size();
             orient_towards(m_Points[m_PointsIndex]);
-            LOGf("points size %s", m_Points.size());
-            LOGf("change to %s", m_PointsIndex);
+            //LOGf("points size %s", m_Points.size());
+            //LOGf("change to %s", m_PointsIndex);
         }
     }
     else
@@ -117,7 +121,34 @@ void Enemy :: logic_self(Freq::Time t)
             m_Target = nearest_not_in_history(nav);
             orient_towards(m_Target);
         }
-        velocity(3.0f * glm::normalize(posdelta));
+        velocity(2.0f * glm::normalize(posdelta));
+    }
+
+    // orient_to_world(-Axis::Z) * 100.0f
+    auto hits = m_pPhysics->hits(position(), m_pPlayer->position());
+    auto turns = glm::angle(
+        orient_to_world(-Axis::Z),
+        glm::normalize(m_pPlayer->position() - position())
+    ) / K_TAU;
+    if(turns < 1.0f/4.0f)
+    {
+        for(auto&& hit: hits)
+        {
+            auto mesh = (Mesh*)std::get<0>(hit);
+            //if(mesh->material()){
+                //auto fn = mesh->material()->texture()->filename();
+                //LOG(fn);
+            if(mesh == m_pPlayer){
+                if(m_pPlayer->hacking())
+                    m_pPlayer->spotted(true);
+            }
+            else if(mesh == this)
+            {}
+            else
+                break;
+            float dist = glm::length(std::get<1>(hit) - position());
+            
+        }
     }
 }
 

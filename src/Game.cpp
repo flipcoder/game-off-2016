@@ -71,24 +71,9 @@ void Game :: preload()
     m_pScene = m_pQor->make<Mesh>("store2.obj");
     m_pRoot->add(m_pScene);
     
-    m_pPlayer = make_shared<Mesh>();
-    m_pPlayerNode = make_shared<Node>();
-    m_pPlayerMesh = m_pQor->make<Mesh>("hacker.obj");
-    m_pPlayer->self_visible(false);
-    auto sz = 0.25f;
-    auto height = 1.0f;
-    m_pPlayer->set_box(m_pPlayerMesh->box());
-    m_pPlayerNode->add(m_pPlayerMesh);
-    m_pPlayer->add(m_pPlayerNode);
-    //m_pPlayer->set_box(Box(
-    //    glm::vec3(-sz, -height, -sz),
-    //    glm::vec3(sz, height, sz)
-    //));
-    m_pPlayer->set_physics(Node::DYNAMIC);
-    m_pPlayer->set_physics_shape(Node::CAPSULE);
-    m_pPlayer->mass(1.0f);
-    m_pPlayer->inertia(false);
+    m_pPhysics = make_shared<Physics>(m_pRoot.get(), this);
     
+    m_pPlayer = make_shared<Player>(m_pResources);
     m_pRoot->add(m_pPlayer);
     //m_pPlayer->add(m_pCamera);
     //m_pCamera->move(Axis::Z);
@@ -132,7 +117,10 @@ void Game :: preload()
         else if(fn.find("spawn-clerk") != string::npos)
         {
             //LOG(Vector::to_string(pt));
-            auto clerk = make_shared<Enemy>(&m_Nav, pt + Axis::Y * 0.5f, m_pResources);
+            auto clerk = make_shared<Enemy>(
+                &m_Nav, pt + Axis::Y * 0.5f,
+                m_pPlayer.get(), m_pPhysics.get(), m_pResources
+            );
             //auto clerk = m_pQor->make<Mesh>("clerk.obj");
             m_Enemies.push_back(clerk);
             m_pRoot->add(clerk);
@@ -205,12 +193,12 @@ void Game :: preload()
     //    //bm->detach();
     //}
     
-    m_pPhysics = make_shared<Physics>(m_pRoot.get(), this);
     m_pPhysics->generate(m_pRoot.get(), Physics::GEN_RECURSIVE);
     m_pPhysics->world()->setGravity(btVector3(0.0, -9.8, 0.0));
     auto body = (btRigidBody*)m_pPlayer->body()->body();
     body->setActivationState(DISABLE_DEACTIVATION);
     
+    float height = 1.0f;
     m_pPlayer->position(Axis::Y * height);
 
     auto mat = make_shared<Material>("videostripes.png", m_pResources);
@@ -270,7 +258,7 @@ void Game :: logic(Freq::Time t)
     // camera logic
     //if(m_pController->button("fire")){
     bool hacked = false;
-    auto hits = m_pPhysics->hits(m_pPlayer->position(), m_pPlayerNode->orient_to_world(-Axis::Z) * 100.0f);
+    auto hits = m_pPhysics->hits(m_pPlayer->position(), m_pPlayer->node()->orient_to_world(-Axis::Z) * 100.0f);
     for(auto&& hit: hits)
     {
         auto mesh = (Mesh*)std::get<0>(hit);
@@ -315,6 +303,8 @@ void Game :: logic(Freq::Time t)
     }
     if(hacked)
     {
+        m_pPlayer->hacking(true);
+        
         ++m_Hacked;
         //LOGf("%s", (m_Comps.size() - m_Hacked));
         if(m_Hacked == m_Comps.size())
@@ -330,6 +320,8 @@ void Game :: logic(Freq::Time t)
         m_pText->set(txt);
         m_pShadowText->set(txt);
         m_TextTime = 2.0f;
+    }else{
+        m_pPlayer->hacking(false);
     }
     
     if(m_Countdown > -K_EPSILON){
@@ -357,9 +349,9 @@ void Game :: logic(Freq::Time t)
         }
     }
 
-    *m_pCamera->matrix() = *m_pPlayerNode->matrix();
-    m_pCamera->position(m_pPlayerNode->position(Space::WORLD));
-    auto zofs = m_pPlayerNode->orient_from_world(2.0f * Axis::Z);
+    *m_pCamera->matrix() = *m_pPlayer->node()->matrix();
+    m_pCamera->position(m_pPlayer->node()->position(Space::WORLD));
+    auto zofs = m_pPlayer->node()->orient_from_world(2.0f * Axis::Z);
     zofs.x = -zofs.x;
     m_pCamera->move(zofs);
     m_pCamera->pend();
@@ -382,18 +374,18 @@ void Game :: logic(Freq::Time t)
     float max_speed = 5.0f;
 
     glm::vec3 v;
-    m_pPlayerNode->rotate(m_pInput->mouse_rel().x / 1000.0f, glm::vec3(0.0f, -1.0f, 0.0f));
+    m_pPlayer->node()->rotate(m_pInput->mouse_rel().x / 1000.0f, glm::vec3(0.0f, -1.0f, 0.0f));
     if(m_pController->button("up"))
-        v += Matrix::heading(*m_pPlayerNode->matrix_c(Space::WORLD)) *
+        v += Matrix::heading(*m_pPlayer->node()->matrix(Space::WORLD)) *
             m_pController->button("up").pressure();
     if(m_pController->button("down"))
-        v -= Matrix::heading(*m_pPlayerNode->matrix_c(Space::WORLD)) *
+        v -= Matrix::heading(*m_pPlayer->node()->matrix(Space::WORLD)) *
             m_pController->button("down").pressure();
     if(m_pController->button("left"))
-        v -= Matrix::right(*m_pPlayerNode->matrix_c(Space::WORLD)) *
+        v -= Matrix::right(*m_pPlayer->node()->matrix(Space::WORLD)) *
             m_pController->button("left").pressure();
     if(m_pController->button("right"))
-        v += Matrix::right(*m_pPlayerNode->matrix_c(Space::WORLD)) *
+        v += Matrix::right(*m_pPlayer->node()->matrix(Space::WORLD)) *
             m_pController->button("right").pressure();
     
     //    auto decel = glm::normalize(v) * sens * 0.8f * t.s();
@@ -414,7 +406,7 @@ void Game :: logic(Freq::Time t)
         //}
         //m_WasMoving = true;
         m_BobPhase = fmod(m_BobPhase + t.s() * m_BobSpeed, 1.0f);
-        m_pPlayerMesh->position(Axis::Y * m_BobAmp * sinf(K_TAU * m_BobPhase));
+        m_pPlayer->mesh()->position(Axis::Y * m_BobAmp * sinf(K_TAU * m_BobPhase));
     }
     //else
     //    m_WasMoving = false;
@@ -422,6 +414,9 @@ void Game :: logic(Freq::Time t)
     v.y = now_v.y + more_y;
 
     m_pPlayer->velocity(v);
+    
+    if(m_pPlayer->spotted())
+        m_pQor->change_state("intro");
     
     m_pRoot->logic(t);
     m_pOrthoRoot->logic(t);
@@ -436,6 +431,5 @@ void Game :: render() const
     m_pPipeline->render(m_pOrthoRoot.get(), m_pOrthoCamera.get(),
         nullptr, Pipeline::NO_CLEAR | Pipeline::NO_DEPTH
     );
-    
 }
 

@@ -10,6 +10,7 @@
 #include "Qor/Sound.h"
 #include "Qor/Text.h"
 #include "Enemy.h"
+#include "Player.h"
 
 class Qor;
 
@@ -65,9 +66,8 @@ class Game:
         std::shared_ptr<Sound> m_pMusic;
         std::shared_ptr<Physics> m_pPhysics;
 
-        std::shared_ptr<Mesh> m_pPlayer;
-        std::shared_ptr<Node> m_pPlayerNode;
-        std::shared_ptr<Mesh> m_pPlayerMesh;
+        std::shared_ptr<Player> m_pPlayer;
+        
         std::shared_ptr<Mesh> m_pScene;
 
         float m_CamHeight = 1.05f;
