@@ -40,12 +40,12 @@ Enemy :: Enemy(Nav* nav, glm::vec3 pos, Player* player, ::Physics* physics, Cach
             nearest_dist = dist;
             m_Orient = true;
         }
-        LOGf("dist %s", dist);
+        //LOGf("dist %s", dist);
         if(dist <= 4.5f)
             m_Points.push_back(n);
     }
-    LOGf("nearest dist %s", nearest_dist);
-    LOGf("orient %s", m_Orient);
+    //LOGf("nearest dist %s", nearest_dist);
+    //LOGf("orient %s", m_Orient);
 
     if(not m_Orient)
     {
