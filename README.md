@@ -2,8 +2,8 @@
 
 Created for GitHub Game Off 2016 by Grady O'Connell and Mark "Alfred" McDaniel
 
-A game based on the gif of a guy running around a computer store, hacking
-all the computers.
+A stealth hacking game where you run around a computer store, hacking all the computers.
+Inspired by the gif.
 
 Written using my own open-source game engine, [Qor](http://github.com/flipcoder/qor).
 
@@ -15,7 +15,7 @@ Windows and Linux builds will be available when the game-off is done.
 
 Run around the computer store with WASD and the mouse,
 hacking computers with left click.
-If anyone working at the store sees you, you lose.
+If anyone working at the store sees you hack, you lose.
 
 ## Credits
 
