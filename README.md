@@ -1,13 +1,11 @@
 ![Hacking in Progress](http://i.imgur.com/7MIJD4y.jpg)
 
-A game based on the meme image of a guy running around a computer store, hacking
+Created for GitHub Game Off 2016 by Grady O'Connell and Mark "Alfred" McDaniel
+
+A game based on the gif of a guy running around a computer store, hacking
 all the computers.
 
-Created for GitHub Game Off 2016
-
 Written using my own open-source game engine, [Qor](http://github.com/flipcoder/qor).
-
-Copyright (c) Grady O'Connell, 2016
 
 ## Download
 
@@ -26,4 +24,6 @@ Programming & Music
 
 Graphics
 - Mark "Alfred" McDaniel (http://github.com/alfredanonymous)
+
+Copyright (c) Grady O'Connell, 2016
 
