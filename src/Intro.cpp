@@ -30,31 +30,72 @@ void Intro :: preload()
     //m_pPlayer = m_pQor->make<Mesh>("guy.obj");
     //m_pRoot->add(m_pPlayer);
 
-    auto mat = make_shared<Material>("vcrosd.png", m_pResources);
-    auto mx = mat->size().x;
-    auto my = mat->size().y;
-    m_pBG = make_shared<Mesh>(
-        make_shared<MeshGeometry>(Prefab::quad(vec2(sw/2.0f, sh/2.0f), vec2(-sw/2.0f, -sh/2.0f))),
-        vector<shared_ptr<IMeshModifier>>{
-            make_shared<Wrap>(Prefab::quad_wrap(vec2(1.0f, 0.0f), vec2(0.0f, 1.0f)))
-        },
-        make_shared<MeshMaterial>(mat)
-    );
-    //m_BGScale = 0.5f;
-    m_pBG->position(glm::vec3(sw/2.0f, sh/2.0f, 0.0f));
-    m_pRoot->add(m_pBG);
+    auto _this = this;
+    StateMachine::on_enter("screen", "title", [_this, sw, sh](){
+        auto mat = make_shared<Material>("bg.png", _this->m_pResources);
+        auto mx = mat->size().x;
+        auto my = mat->size().y;
+        if(_this->m_pBG)
+            _this->m_pBG->detach();
+        _this->m_pBG = make_shared<Mesh>(
+            make_shared<MeshGeometry>(Prefab::quad(vec2(sw/2.0f, sh/2.0f), vec2(-sw/2.0f, -sh/2.0f))),
+            vector<shared_ptr<IMeshModifier>>{
+                make_shared<Wrap>(Prefab::quad_wrap(vec2(1.0f, 0.0f), vec2(0.0f, 1.0f)))
+            },
+            make_shared<MeshMaterial>(mat)
+        );
+        _this->m_pBG->position(glm::vec3(sw/2.0f, sh/2.0f, 0.0f));
+        _this->m_pRoot->add(_this->m_pBG);
+    });
+    StateMachine::on_enter("screen", "wanted", [_this, sw, sh](){
+        auto mat = make_shared<Material>("wanted.png", _this->m_pResources);
+        auto mx = mat->size().x;
+        auto my = mat->size().y;
+        if(_this->m_pBG)
+            _this->m_pBG->detach();
+        _this->m_pBG = make_shared<Mesh>(
+            make_shared<MeshGeometry>(Prefab::quad(vec2(sw/2.0f, sh/2.0f), vec2(-sw/2.0f, -sh/2.0f))),
+            vector<shared_ptr<IMeshModifier>>{
+                make_shared<Wrap>(Prefab::quad_wrap(vec2(1.0f, 0.0f), vec2(0.0f, 1.0f)))
+            },
+            make_shared<MeshMaterial>(mat)
+        );
+        _this->m_pBG->position(glm::vec3(sw/2.0f, sh/2.0f, 0.0f));
+        _this->m_pRoot->add(_this->m_pBG);
+    });
 
-    m_pFont = std::make_shared<Font>(
-        m_pResources->transform(string("vcr.ttf:") +
-            to_string(int(sw / 24.0f + 0.5f))),
-        m_pResources
-    );
-    m_pText = std::make_shared<Text>(m_pFont);
-    m_pText->align(Text::CENTER);
-    m_pText->position(glm::vec3(sw / 2.0f, sh / 2.0f, 1.0f));
-    m_pRoot->add(m_pText);
+    
+    StateMachine::on_enter("screen", "vcr", [_this, sw, sh](){
+    
+        auto mat = make_shared<Material>("vcrosd.png", _this->m_pResources);
+        auto mx = mat->size().x;
+        auto my = mat->size().y;
+        if(_this->m_pBG)
+            _this->m_pBG->detach();
+        _this->m_pBG = make_shared<Mesh>(
+            make_shared<MeshGeometry>(Prefab::quad(vec2(sw/2.0f, sh/2.0f), vec2(-sw/2.0f, -sh/2.0f))),
+            vector<shared_ptr<IMeshModifier>>{
+                make_shared<Wrap>(Prefab::quad_wrap(vec2(1.0f, 0.0f), vec2(0.0f, 1.0f)))
+            },
+            make_shared<MeshMaterial>(mat)
+        );
+        //m_BGScale = 0.5f;
+        _this->m_pBG->position(glm::vec3(sw/2.0f, sh/2.0f, 0.0f));
+        _this->m_pRoot->add(_this->m_pBG);
 
-    m_Text = "Silly Bernard, do you\nreally think you can hack\nthe world, one computer store\nat a time?";
+        _this->m_pFont = std::make_shared<Font>(
+            _this->m_pResources->transform(string("vcr.ttf:") +
+                to_string(int(sw / 24.0f + 0.5f))),
+            _this->m_pResources
+        );
+        _this->m_pText = std::make_shared<Text>(_this->m_pFont);
+        _this->m_pText->align(Text::CENTER);
+        _this->m_pText->position(glm::vec3(sw / 2.0f, sh / 2.0f, 1.0f));
+        _this->m_pRoot->add(_this->m_pText);
+
+        _this->m_Text = "Hack all the computers\nwhen no one is looking.\nThe clerks can spot a hacker\nfrom a mile away.";
+    });
+    state("screen", "title");
 }
 
 Intro :: ~Intro()
@@ -73,16 +114,34 @@ void Intro :: enter()
 
 void Intro :: logic(Freq::Time t)
 {
+    State::logic(t);
+    
     if(m_pInput->key(SDLK_ESCAPE))
         m_pQor->quit();
 
-    if(m_TextVisibility >= 1.0f*m_Text.size() - K_EPSILON){
-        if(m_pInput->key(SDLK_SPACE) || m_pInput->key(SDLK_RETURN))
-            m_pQor->change_state("game");
+    if(state("screen")=="vcr")
+    {
+        if(m_TextVisibility >= 1.0f*m_Text.size() - K_EPSILON){
+            if(m_pInput->key(SDLK_SPACE).pressed_now() || m_pInput->key(SDLK_RETURN).pressed_now())
+                m_pQor->change_state("game");
+        }
+
+        m_TextVisibility = std::min(1.0f*m_Text.size(), m_TextVisibility + t.s() * 20.0f);
+        m_pText->set(m_Text.substr(0,int(m_TextVisibility)));
+    }
+    else if(state("screen")=="title")
+    {
+        if(m_pInput->key(SDLK_SPACE).pressed_now() || m_pInput->key(SDLK_RETURN).pressed_now()){
+            state("screen","wanted");
+        }
+    }
+    else if(state("screen")=="wanted")
+    {
+        if(m_pInput->key(SDLK_SPACE).pressed_now() || m_pInput->key(SDLK_RETURN).pressed_now()){
+            state("screen","vcr");
+        }
     }
 
-    m_TextVisibility = std::min(1.0f*m_Text.size(), m_TextVisibility + t.s() * 20.0f);
-    m_pText->set(m_Text.substr(0,int(m_TextVisibility)));
     
     m_pRoot->logic(t);
     //m_pBG->reset_orientation();
