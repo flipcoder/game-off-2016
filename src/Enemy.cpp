@@ -130,7 +130,7 @@ void Enemy :: logic_self(Freq::Time t)
         orient_to_world(-Axis::Z),
         glm::normalize(m_pPlayer->position() - position())
     ) / K_TAU;
-    if(turns < 1.0f/4.0f)
+    if(turns < 1.0f/6.0f)
     {
         for(auto&& hit: hits)
         {
@@ -142,12 +142,9 @@ void Enemy :: logic_self(Freq::Time t)
                 if(m_pPlayer->hacking())
                     m_pPlayer->spotted(this);
             }
-            else if(mesh == this)
-            {}
-            else
+            else if(mesh != this)
                 break;
             float dist = glm::length(std::get<1>(hit) - position());
-            
         }
     }
 }
