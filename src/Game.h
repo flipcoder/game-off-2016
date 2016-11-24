@@ -95,6 +95,12 @@ class Game:
         std::map<std::string, std::vector<std::shared_ptr<Mesh>>> m_BatchMeshes;
 
         Nav m_Nav;
+
+        glm::mat4 m_CameraSrc;
+        glm::mat4 m_CameraDest;
+        float m_CameraT = 0.0f;
+
+        std::shared_ptr<Mesh> m_pBlankMesh;
 };
 
 #endif

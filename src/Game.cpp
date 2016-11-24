@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <thread>
+#include <glm/gtx/matrix_interpolation.hpp>
 using namespace std;
 using namespace glm;
 
@@ -200,8 +201,20 @@ void Game :: preload()
     
     float height = 1.0f;
     m_pPlayer->position(Axis::Y * height);
+    
+    auto mat = make_shared<Material>("blank.png", m_pResources);
+    m_pBlankMesh = make_shared<Mesh>(
+        make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh), vec2(0.0f, 0.0f))),
+        vector<shared_ptr<IMeshModifier>>{
+            make_shared<Wrap>(Prefab::quad_wrap(vec2(1.0f, 0.0f), vec2(0.0f, 1.0f)))
+        },
+        make_shared<MeshMaterial>(mat)
+    );
+    m_pOrthoRoot->add(m_pBlankMesh);
+    m_pBlankMesh->material()->ambient(Color::white(0.0f));
+    m_pBlankMesh->material()->diffuse(Color::white(0.0f));
 
-    auto mat = make_shared<Material>("videostripes.png", m_pResources);
+    mat = make_shared<Material>("videostripes.png", m_pResources);
     auto mesh = make_shared<Mesh>(
         make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh), vec2(0.0f, 0.0f))),
         vector<shared_ptr<IMeshModifier>>{
@@ -246,6 +259,11 @@ void Game :: enter()
     m_pPipeline->bg_color(Color::black());
     m_pInput->relative_mouse(true);
     m_pMusic->play();
+
+    auto _this = this;
+    m_pPlayer->on_spotted.connect([_this](Enemy* e){
+        _this->m_CameraDest = *e->matrix();
+    });
 }
 
 void Game :: logic(Freq::Time t)
@@ -295,10 +313,12 @@ void Game :: logic(Freq::Time t)
                 }
             }
         }
-        if(fn.find("door") != string::npos && dist < 2.0f)
-        {
-            if(m_Hacked == m_Comps.size())
-                m_pQor->change_state("intro");
+        if(not m_pPlayer->spotted()){
+            if(fn.find("door") != string::npos && dist < 2.0f)
+            {
+                if(m_Hacked == m_Comps.size())
+                    m_pQor->change_state("intro");
+            }
         }
     }
     if(hacked)
@@ -349,12 +369,29 @@ void Game :: logic(Freq::Time t)
         }
     }
 
-    *m_pCamera->matrix() = *m_pPlayer->node()->matrix();
-    m_pCamera->position(m_pPlayer->node()->position(Space::WORLD));
-    auto zofs = m_pPlayer->node()->orient_from_world(2.0f * Axis::Z);
-    zofs.x = -zofs.x;
-    m_pCamera->move(zofs);
-    m_pCamera->pend();
+    // put camera in the right place
+    if(m_pPlayer->spotted())
+    {
+        *m_pCamera->matrix() = glm::interpolate(m_CameraSrc, m_CameraDest, std::min(1.0f, m_CameraT));
+        m_pCamera->pend();
+        m_CameraT += t.s();
+        if(m_CameraT >= 2.0f){
+            m_pQor->change_state("game");
+        }else if(m_CameraT >= 1.0f){
+            auto alpha = m_CameraT - 1.0f;
+            m_pBlankMesh->material()->ambient(Color::white(alpha));
+            m_pBlankMesh->material()->diffuse(Color::white(alpha));
+        }
+    }else{
+        auto mat = *m_pPlayer->node()->matrix();
+        Matrix::translation(mat, m_pPlayer->node()->position(Space::WORLD));
+        auto zofs = m_pPlayer->node()->orient_from_world(2.0f * Axis::Z);
+        zofs.x = -zofs.x;
+        Matrix::translate(mat, zofs);
+        *m_pCamera->matrix() = mat;
+        m_pCamera->pend();
+        m_CameraSrc = mat;
+    }
  
     // TEMP: position and tilt camera
     //if(m_pInput->key(SDLK_SPACE))
@@ -415,8 +452,8 @@ void Game :: logic(Freq::Time t)
 
     m_pPlayer->velocity(v);
     
-    if(m_pPlayer->spotted())
-        m_pQor->change_state("intro");
+    //if(m_pPlayer->spotted())
+    //    m_pQor->change_state("intro");
     
     m_pRoot->logic(t);
     m_pOrthoRoot->logic(t);

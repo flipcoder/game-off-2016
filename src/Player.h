@@ -2,6 +2,7 @@
 #define PLAYER_H_TKMY2G9V
 
 #include "Qor/Mesh.h"
+class Enemy;
 
 class Player:
     public Mesh
@@ -16,8 +17,16 @@ class Player:
 
         void hacking(bool b) { m_bHacking = b; }
         bool hacking() const { return m_bHacking; }
-        void spotted(bool b) { m_bSpotted = b; }
+        void spotted(Enemy* e) {
+            if(e){
+                m_bSpotted = true;
+                on_spotted(e);
+            }else
+                m_bSpotted = false;
+        }
         bool spotted() const { return m_bSpotted; }
+
+        boost::signals2::signal<void(Enemy*)> on_spotted;
         
     private:
 

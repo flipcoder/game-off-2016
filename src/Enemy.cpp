@@ -140,7 +140,7 @@ void Enemy :: logic_self(Freq::Time t)
                 //LOG(fn);
             if(mesh == m_pPlayer){
                 if(m_pPlayer->hacking())
-                    m_pPlayer->spotted(true);
+                    m_pPlayer->spotted(this);
             }
             else if(mesh == this)
             {}
