@@ -69,7 +69,7 @@ void Game :: preload()
     m_pOrthoCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
     m_pMusic = m_pQor->make<Sound>("music.ogg");
     m_pRoot->add(m_pMusic);
-    m_pScene = m_pQor->make<Mesh>("store2.obj");
+    m_pScene = m_pQor->make<Mesh>("store"+m_pQor->args().value_or("map","1")+".obj");
     m_pRoot->add(m_pScene);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), this);
@@ -115,11 +115,16 @@ void Game :: preload()
             //m_BatchMeshes[fn].push_back(mesh);
             mesh->detach();
         }
-        else if(fn.find("spawn-clerk") != string::npos)
-        {
+        else if(
+            fn.find("spawn-clerk") != string::npos ||
+            fn.find("camspawn") != string::npos
+        ){
             //LOG(Vector::to_string(pt));
+            bool cam = fn.find("camspawn") != string::npos;
             auto clerk = make_shared<Enemy>(
-                &m_Nav, pt + Axis::Y * 0.5f,
+                cam ? Enemy::CAMERA : Enemy::CLERK,
+                &m_Nav,
+                cam ? pt : pt + Axis::Y * 0.5f,
                 m_pPlayer.get(), m_pPhysics.get(), m_pResources
             );
             //auto clerk = m_pQor->make<Mesh>("clerk.obj");
@@ -317,7 +322,7 @@ void Game :: logic(Freq::Time t)
             if(fn.find("door") != string::npos && dist < 2.0f)
             {
                 if(m_Hacked == m_Comps.size())
-                    m_pQor->change_state("intro");
+                    m_pQor->change_state("transition");
             }
         }
     }

@@ -23,7 +23,7 @@ void Intro :: preload()
     float sh = m_pQor->window()->size().y;
     
     m_pCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
-    m_pMusic = m_pQor->make<Sound>("menu.ogg");
+    m_pMusic = m_pQor->make<Sound>("status.ogg");
     m_pRoot->add(m_pMusic);
     m_pRoot->add(m_pCamera);
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), this);

@@ -13,7 +13,12 @@ class Enemy:
 {
     public:
 
-        Enemy(Nav* nav, glm::vec3 pos, Player* player, ::Physics* physics, Cache<Resource, std::string>* cache);
+        enum Type {
+            CLERK,
+            CAMERA
+        };
+
+        Enemy(Type t, Nav* nav, glm::vec3 pos, Player* player, ::Physics* physics, Cache<Resource, std::string>* cache);
         virtual ~Enemy() {}
 
         virtual void logic_self(Freq::Time t) override;

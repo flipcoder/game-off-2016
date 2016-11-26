@@ -5,6 +5,7 @@
 #include "Info.h"
 #include "Game.h"
 #include "Intro.h"
+#include "Transition.h"
 using namespace std;
 using namespace kit;
 
@@ -24,6 +25,7 @@ int main(int argc, const char** argv)
         auto engine = kit::make_unique<Qor>(args, Info::Program);
         engine->states().register_class<Game>("game");
         engine->states().register_class<Intro>("intro");
+        engine->states().register_class<Transition>("transition");
         engine->run("game");
 #ifndef DEBUG
     }catch(const Error&){

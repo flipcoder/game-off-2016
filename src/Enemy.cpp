@@ -7,8 +7,8 @@
 using namespace std;
 using namespace glm;
 
-Enemy :: Enemy(Nav* nav, glm::vec3 pos, Player* player, ::Physics* physics, Cache<Resource, std::string>* cache):
-    Mesh(cache->transform("clerk.obj"), cache),
+Enemy :: Enemy(Type t, Nav* nav, glm::vec3 pos, Player* player, ::Physics* physics, Cache<Resource, std::string>* cache):
+    Mesh(cache->transform(t==CAMERA?"camera.obj":"clerk.obj"), cache),
     m_pResources(cache),
     m_pNav(nav),
     m_pPlayer(player),
