@@ -135,16 +135,15 @@ void Enemy :: logic_self(Freq::Time t)
         for(auto&& hit: hits)
         {
             auto mesh = (Mesh*)std::get<0>(hit);
-            //if(mesh->material()){
-                //auto fn = mesh->material()->texture()->filename();
-                //LOG(fn);
             if(mesh == m_pPlayer){
-                if(m_pPlayer->hacking())
-                    m_pPlayer->spotted(this);
+                if(m_pPlayer->hacking()){
+                    float dist = glm::length(std::get<1>(hit) - position());
+                    if(dist < 20.0f)
+                        m_pPlayer->spotted(this);
+                }
             }
             else if(mesh != this)
                 break;
-            float dist = glm::length(std::get<1>(hit) - position());
         }
     }
 }

@@ -3,16 +3,16 @@
     "sensitivity": 0.5,
     "input": {
         "binds": {
-            "e": [
+            "w": [
                 "up",
                 "forward"
             ],
-            "s": "left",
-            "d": [
+            "a": "left",
+            "s": [
                 "down",
                 "back"
             ],
-            "f": "right",
+            "d": "right",
             "mouse left": "fire",
             "mouse right": "zoom",
             "left shift": "sprint",
