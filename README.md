@@ -9,7 +9,9 @@ Written using my own open-source game engine, [Qor](http://github.com/flipcoder/
 
 ## Download
 
-Windows and Linux builds will be available when the game-off is done.
+[Windows build](http://filedropper.com/hackinginprogress)
+
+Linux build will be available soon.
 
 ## How to Play
 
