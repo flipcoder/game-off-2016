@@ -57,6 +57,7 @@ class Game:
         Controller* m_pController = nullptr;
         Pipeline* m_pPipeline = nullptr;
         Cache<Resource, std::string>* m_pResources = nullptr;
+        std::shared_ptr<Physics> m_pPhysics;
 
         std::shared_ptr<Node> m_pRoot;
         std::shared_ptr<Camera> m_pCamera;
@@ -64,7 +65,6 @@ class Game:
         std::shared_ptr<Camera> m_pOrthoCamera;
         
         std::shared_ptr<Sound> m_pMusic;
-        std::shared_ptr<Physics> m_pPhysics;
 
         std::shared_ptr<Player> m_pPlayer;
         

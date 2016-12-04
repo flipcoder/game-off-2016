@@ -9,10 +9,10 @@
 using namespace std;
 using namespace kit;
 
-int main(int argc, const char** argv)
+int main(int argc, char* argv[])
 {
     
-    Args args(argc, argv);
+    Args args(argc, (const char**)argv);
     args.set("mod", PACKAGE);
     args.set("title", PACKAGE);
     args.set("loading_bg", "0000ff");
