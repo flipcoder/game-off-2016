@@ -1,5 +1,5 @@
 # Blender MTL File: 'store4.blend'
-# Material Count: 32
+# Material Count: 33
 
 newmtl Material.001
 Ns 94.117647
@@ -233,6 +233,17 @@ illum 2
 map_Kd nav.png
 
 newmtl None_nav.png.009
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.800000 0.800000 0.800000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd nav.png
+
+newmtl None_nav.png.010
 Ns 0.000000
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
