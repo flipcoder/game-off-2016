@@ -7,6 +7,10 @@ Inspired by the gif.
 
 Written using my own open-source game engine, [Qor](http://github.com/flipcoder/qor).
 
+## Videos
+
+[![Video 1](http://img.youtube.com/vi/-mwickYxVTg/0.jpg)](http://www.youtube.com/watch?v=-mwickYxVTg)
+
 ## Download
 
 [Windows build](http://filedropper.com/hackinginprogress)
