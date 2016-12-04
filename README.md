@@ -13,7 +13,8 @@ Written using my own open-source game engine, [Qor](http://github.com/flipcoder/
 
 ## Download
 
-[Windows build](http://filedropper.com/hackinginprogress)
+[Windows (mirror 1)](http://naos.node-3.net/flipcoder/HackingInProgress.zip)
+[Windows (mirror 2)](http://filedropper.com/hackinginprogress)
 
 Linux build will be available soon.
 
