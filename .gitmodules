@@ -1,4 +1,4 @@
 [submodule "lib/Qor"]
 	path = lib/Qor
-	url = http://gitlab.com/flipcoder/qor
+	url = https://gitlab.com/filpcoder/qor.git
 	branch = master
