@@ -2,7 +2,15 @@ solution("HackingInProgress")
     targetdir("bin")
     
     configurations {"Debug", "Release"}
-        defines { "GLM_FORCE_RADIANS", "QOR_NO_PYTHON", "QOR_NO_CAIRO", "QOR_NO_NET" }
+        defines {
+            "GLM_FORCE_CTOR_INIT",
+            "GLM_ENABLE_EXPERIMENTAL",
+            "GLM_FORCE_RADIANS",
+            "QOR_NO_PYTHON",
+            "QOR_NO_CAIRO",
+            "QOR_NO_NET",
+            "NOMINMAX"
+        }
     
         -- Debug Config
         configuration "Debug"
@@ -60,6 +68,7 @@ solution("HackingInProgress")
                 "lib/Qor/lib/kit",
                 "/usr/local/include/",
                 "/usr/include/bullet/",
+                "/usr/include/rapidxml/",
                 "/usr/include/raknet/DependentExtensions"
             }
 
